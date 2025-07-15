@@ -146,13 +146,13 @@ export class SyncClient {
     return blockRefToPoint(res.tip!);
   }
 
-  async fetchBlock(p: ChainPoint): Promise<cardano.Block> {
+  async fetchBlock(p: ChainPoint): Promise<sync.AnyChainBlock> {
     const req = pointToBlockRef(p);
     const res = await this.inner.fetchBlock({ ref: [req] });
-    return anyChainToBlock(res.block[0])!;
+    return res.block[0]!;
   }
 
-  async fetchHistory(p: ChainPoint | undefined, maxItems = 1): Promise<cardano.Block> {
+  async fetchHistory(p: ChainPoint | undefined, maxItems = 1): Promise<sync.AnyChainBlock> {
     const req = new sync.DumpHistoryRequest({
       startToken: p ? new sync.BlockRef({
         index: BigInt(p.slot),
@@ -167,7 +167,7 @@ export class SyncClient {
       throw new Error("No block history found for the provided ChainPoint.");
     }
 
-    const block = anyChainToBlock(res.block[0]);
+    const block = res.block[0];
 
     return block!;
   }
